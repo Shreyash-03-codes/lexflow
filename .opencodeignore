@@ -1,0 +1,66 @@
+# =========================
+# LexFlow OpenCode Ignore
+# =========================
+
+# ----- Build outputs -----
+**/target/
+**/dist/
+**/build/
+**/out/
+**/*.jar
+**/*.war
+**/*.class
+
+# ----- Node / Angular -----
+**/node_modules/
+**/coverage/
+**/.angular/
+**/.cache/
+
+# ----- IDE files -----
+**/.idea/
+**/*.iml
+**/.vscode/
+**/.settings/
+
+# ----- Logs -----
+**/*.log
+**/logs/
+
+# ----- OS files -----
+**/.DS_Store
+**/Thumbs.db
+
+# ----- Git -----
+**/.git/
+**/.gitignore
+
+# ----- Environment / secrets -----
+**/.env
+**/.env.*
+**/application-secrets.properties
+
+# ----- Maven / Gradle caches -----
+**/.m2/
+**/.gradle/
+
+# ----- Frontend build artifacts -----
+frontend/dist/
+frontend/build/
+
+# ----- Backend build artifacts -----
+backend/target/
+
+# ----- Temporary files -----
+**/*.tmp
+**/*.temp
+
+# ----- Large irrelevant folders -----
+**/node_modules/**/*
+**/target/**/*
+**/dist/**/*
+
+# ----- AI / OpenCode noise reduction -----
+**/package-lock.json
+**/yarn.lock
+**/pnpm-lock.yaml

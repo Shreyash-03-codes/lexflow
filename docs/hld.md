@@ -1299,46 +1299,25 @@ The overall flow of data through the system is illustrated below.
 
 ```mermaid
 flowchart LR
+    User[User Browser]
+    Angular[Angular Frontend]
+    API[REST API Layer]
+    Services[Business Services]
+    Repo[Repositories]
+    DB[(PostgreSQL)]
+    Storage[(Local Storage)]
+    AI[AI Provider]
+    SMTP[SMTP Server]
 
-User
-
--->
-
-Angular
-
--->
-
-REST API
-
--->
-
-Business Services
-
--->
-
-Repositories
-
--->
-
-PostgreSQL
-
-Business Services
-
--->
-
-Local Storage
-
-Business Services
-
--->
-
-AI Provider
-
-Business Services
-
--->
-
-SMTP Server
+    User -->|HTTP Request| Angular
+    Angular -->|REST API Call| API
+    API -->|Business Operations| Services
+    Services -->|Database Access| Repo
+    Repo -->|Read/Write| DB
+    
+    Services -->|Store/Retrieve Files| Storage
+    Services -->|Generate Summary| AI
+    Services -->|Send Notifications| SMTP
 ```
 
 This architecture ensures that all business operations pass through the service layer before interacting with persistence or external systems.
@@ -2578,28 +2557,21 @@ Version 1 supports **PDF documents only**.
 
 ```mermaid
 flowchart LR
-
-Lawyer
-
--->
-
-Angular
-
--->
-
-Document API
-
--->
-
-Document Service
-
-Document Service --> PostgreSQL
-
-Document Service --> LocalFileSystem
-
-PostgreSQL --> DocumentMetadata[(Document Metadata)]
-
-LocalFileSystem --> PDFFile[(PDF Files)]
+    Lawyer[Lawyer] -->|Select & Upload PDF| Angular[Angular Frontend]
+    Angular -->|POST /api/documents| DocumentAPI[Document API Controller]
+    DocumentAPI -->|Validate & Process| DocumentService[Document Service]
+    
+    DocumentService -->|Save Metadata| PostgreSQL[(PostgreSQL)]
+    PostgreSQL -->|Store Metadata| DocumentMetadata[(Document Metadata)]
+    
+    DocumentService -->|Store PDF File| LocalFileSystem[(Local File System)]
+    LocalFileSystem -->|Store File| PDFFile[(PDF Files)]
+    
+    LocalFileSystem -.->|File Saved| DocumentService
+    PostgreSQL -.->|Metadata Saved| DocumentService
+    DocumentService -.->|Upload Response| DocumentAPI
+    DocumentAPI -.->|HTTP 201 Created| Angular
+    Angular -.->|Upload Complete| Lawyer
 ```
 
 ---
@@ -2846,34 +2818,21 @@ For Version 1, summaries are generated **on demand** and are **not persisted**. 
 
 ```mermaid
 flowchart LR
-
-Lawyer
-
--->
-
-Angular
-
--->
-
-AI API
-
--->
-
-AI Service
-
-AI Service --> LocalFileStorage
-
-AI Service --> TextExtraction
-
-TextExtraction --> PromptBuilder
-
-PromptBuilder --> ExternalAI
-
-ExternalAI --> AI Service
-
-AI Service --> Angular
-
-Angular --> Lawyer
+    Lawyer[👤 Lawyer] -->|Request Summary| Angular[Angular UI]
+    Angular -->|POST /summary| AIAPI[AI API Controller]
+    AIAPI -->|Process Request| AIService[AI Service]
+    
+    AIService -->|1. Load PDF| LocalFileStorage[(Local File Storage)]
+    LocalFileStorage -->|PDF Content| AIService
+    
+    AIService -->|2. Extract Text| TextExtraction[Text Extraction]
+    TextExtraction -->|Plain Text| PromptBuilder[Prompt Builder]
+    PromptBuilder -->|Prompt| ExternalAI[External AI Provider]
+    ExternalAI -->|Generated Summary| AIService
+    
+    AIService -->|Summary Response| AIAPI
+    AIAPI -->|JSON Response| Angular
+    Angular -->|Display Summary| Lawyer
 ```
 
 ---
